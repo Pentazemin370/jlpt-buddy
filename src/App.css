@@ -1,38 +1,81 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
   background-color: #282c34;
-  min-height: 100vh;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.container {
+  margin-left:16px;
+  margin-right:16px;
+}
+.navbar {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.nav-section {
+  padding:16px;
+  text-align:center;
+  border: 2px solid white;
+}
+.nav-button {
+  font-size: calc(10px + 2vmin);
+  color:white;
+  padding:16px;
+  border:2px solid white;
+  background:none;
+  background-color: transparent;
+}
+.nav-button.active,.nav-button:hover {
+  background-color: rgba(0,0,0,0.3);
+  cursor:pointer;
+}
+.nav-button.active {
+  color:aqua;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+input[type="checkbox"]{
+  width: 32px;
+  height: 32px;
+}
+ol {
+  
+  padding:0px;
+  display:grid;
+  grid-auto-rows:1fr;
+}
+li {
+  display:flex;
+  align-items: center;
+}
+table {
+  border-spacing:0px;
+  height:100%;
+  table-layout: fixed;
+  width:100%;
+}
+tr {
+  width:100%;
+  height:100%;
+}
+td:first-child{
+  width:50px;
+  padding-left:0px;
+  text-align: center;
+}
+
+td {
+  padding-left:20px;
+  border:1px solid white;
+}
+
+a {
+  text-decoration: none;
+  color:white;
+}
+
+tr:hover, tr:hover a{
+  cursor:pointer;
+  color:aqua;
 }
