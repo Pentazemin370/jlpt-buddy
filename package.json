@@ -5,17 +5,26 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.15",
     "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",
     "concurrently": "^6.2.1",
     "electron-is-dev": "^2.0.0",
+    "firebase": "^9.0.0",
+    "firebase-admin": "^9.11.1",
+    "firebaseui": "^5.0.0",
+    "html-react-parser": "^1.2.8",
     "npm": "^7.21.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-native": "^0.65.1",
+    "react-router-dom": "^5.2.1",
     "react-scripts": "4.0.3",
     "readline": "^1.3.0",
+    "sass": "^1.38.2",
     "wait-on": "^6.0.0",
     "web-vitals": "^1.1.2"
   },
@@ -29,7 +38,8 @@
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "electron-package": "electron-builder -c.extraMetadata.main=build/electron.js",
-    "preelectron-package": "npm run build"
+    "preelectron-package": "npm run build",
+    "deploy": "react-scripts build && surge --project D:/denni/Documents/jlpt-buddy/build --domain jlpt-kouhai.surge.sh"
   },
   "build": {
     "appId": "org.odekake.japan.jlpt5.proto",
@@ -60,7 +70,7 @@
     ]
   },
   "devDependencies": {
-    "@capacitor/cli": "^3.2.0",
+    "@types/react": "^17.0.19",
     "electron": "^13.2.2",
     "electron-builder": "^22.11.7",
     "puppeteer": "^10.2.0"

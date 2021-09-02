@@ -1,71 +1,91 @@
-import './App.css';
+import './App.scss';
 import { useEffect, useState } from 'react';
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, getDoc, doc, setDoc } from 'firebase/firestore/lite';
+import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
+import { VocabTest } from './components/Test/Test';
+import { SideMenu } from './components/SideMenu/SideMenu';
+import { Main } from './components/Main/Main';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCnjrJTMo8Yr0bQ7Z8YXQgbVNX98usrHho",
+  authDomain: "saltybread-221fd.firebaseapp.com",
+  databaseURL: "https://saltybread-221fd.firebaseio.com",
+  projectId: "saltybread-221fd",
+  storageBucket: "saltybread-221fd.appspot.com",
+  messagingSenderId: "1091174055877",
+  appId: "1:1091174055877:web:1037e06fd0c14226ab15ac"
+};
 
 function App() {
-  const [category, setCategory] = useState('n5-grammar');
-  const [content, setContent] = useState(null);
-  const [list, setList] = useState(null);
-  const [checkmarks, setCheckmarks] = useState({});
+  const [category, setCategory] = useState<string>('n5-grammar');
+  const [content, setContent] = useState<Object>(null);
+  const [list, setList] = useState<any[]>([]);
+  const [checkmarks, setCheckmarks] = useState<{}>({});
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
   useEffect(() => {
     (async () => {
       if (!content) {
-        const res = await fetch('./content.json');
-        const json = await res.json();
-        setContent(json);
-      } else {
+        const documentRef = await getDoc(doc(db, "main", "content"));
+        const data = documentRef.data();
+        setContent(data);
+      } else if (category) {
         setList(content[category]);
-        if (localStorage.getItem(`jlpt-checkmarks-${category}`)) {
-          setCheckmarks(JSON.parse(localStorage.getItem(`jlpt-checkmarks-${category}`)));
+        const documentRef = await getDoc(doc(db, 'main', `jlpt-checkmarks-${category}`));
+        const globalCheckmarks = documentRef.data();
+        const localCheckmarks = localStorage.getItem(`jlpt-checkmarks-${category}`);
+        if (globalCheckmarks) {
+          if (localCheckmarks) {
+            Object.assign(globalCheckmarks, JSON.parse(localCheckmarks));
+          }
+          setCheckmarks(globalCheckmarks);
+        } else if (localCheckmarks) {
+          setCheckmarks(localCheckmarks);
+        } else {
+          setCheckmarks({});
         }
       }
     })();
-  }, [content, category]);
+  }, [content, category, db]);
 
-  const handleClick = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-    const link = e.currentTarget.querySelector('a');
-    if (link && link.href) {
-      window.open(link.href);
+  document.onkeydown = async (e) => {
+    if (e.key === "s" && e.ctrlKey) {
+      e.preventDefault();
+      if (!authenticated) {
+        try {
+          const auth = getAuth();
+          const password = prompt('');
+          const credentials = await signInWithEmailAndPassword(auth, 'dennishpark@gmail.com', password);
+          if (credentials.user && credentials.user.uid) {
+            setAuthenticated(true);
+          }
+        } catch {
+          console.log('hello');
+        }
+      }
+      setDoc(doc(db, 'main', `jlpt-checkmarks-${category}`), checkmarks);
     }
   }
 
-  if (content && list) {
+  if (content) {
     return (
-      <div className="App">
-        <div className="container">
-          <header>
-            <div className="nav-section">Category</div>
-            <div className="navbar">
-              {Object.keys(content).map(key =>
-                <button
-                  className={`nav-button ${category === key ? 'active' : ''}`}
-                  onClick={() => setCategory(key)}
-                >{key}</button>)}
-            </div>
-          </header>
-          <main>
-            <ol>
-              {list.map((li, index) => {
-                if (li) {
-                  return <li key={index}>
-                    <input type="checkbox" checked={!!checkmarks[index]}
-                      onChange={
-                        (evt) => {
-                          const temp = { ...checkmarks };
-                          temp[index] = evt.target.checked;
-                          localStorage.setItem(`jlpt-checkmarks-${category}`, JSON.stringify(temp));
-                          setCheckmarks(temp);
-                        }} />
-                    <table dangerouslySetInnerHTML={{ __html: li }} onClick={handleClick}></table></li>
-                }
-                return null;
-              })}
-            </ol>
-          </main>
+      <Router>
+        <div className="App">
+          <SideMenu />
+          <Switch>
+            <Route path="/vocab-test">
+              <VocabTest list={list} content={content} setCategory={setCategory} setList={setList} />
+            </Route>
+            <Route path="/">
+              <Main checkmarks={checkmarks} setCheckmarks={setCheckmarks} content={content} />
+            </Route>
+          </Switch>
         </div>
-      </div>
+      </Router>
     );
   }
   return null;

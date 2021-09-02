@@ -1,0 +1,39 @@
+.test {
+    .buttonsContainer {
+        width: 100%;
+        display: flex;
+    }
+    .pageButton {
+        height: 50px;
+        flex: 1;
+    }
+    table {
+        width: 100%;
+        border-spacing: 0px;
+    }
+    tr {
+        display: flex;
+        cursor: pointer;
+        &.active td {
+            color: white;
+            > a {
+                color: white;
+                &:hover {
+                    color: white;
+                }
+            }
+        }
+    }
+    td {
+        flex: 1;
+        height: 100px;
+        border: 1px solid white;
+        color: transparent;
+        > a {
+            color: transparent;
+            &:hover {
+                color: transparent;
+            }
+        }
+    }
+}
